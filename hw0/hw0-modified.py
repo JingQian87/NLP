@@ -62,20 +62,22 @@ if __name__ == "__main__":
     from sklearn.metrics import precision_recall_curve
     from inspect import signature
     precision, recall, _ = precision_recall_curve(y_test, y_probs)
+    print(y_test, y_probs)
     #print(precision, recall)
-    step_kwargs = ({'step': 'post'}
-                   if 'step' in signature(plt.fill_between).parameters
-                   else {})
-    plt.step(recall, precision, color='b', alpha=0.2,
-             where='post')
-    plt.fill_between(recall, precision, alpha=0.2, color='b', **step_kwargs)
+    # step_kwargs = ({'step': 'post'}
+    #                if 'step' in signature(plt.fill_between).parameters
+    #                else {})
+    # plt.step(recall, precision, color='b', alpha=0.2,
+    #          where='post')
+    # plt.fill_between(recall, precision, alpha=0.2, color='b', **step_kwargs)
+    plt.plot(recall,precision)
 
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     plt.title('precision recall curve (%s neighbors)' %kn)
-    plt.savefig('precision_recall_curve%s.png'%kn)
+    plt.savefig('test%s.png'%kn)
 
 
     # and/or find an example of this curve being plotted.

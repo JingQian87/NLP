@@ -10,8 +10,6 @@ Following is the screenshot of my Google Cloud "VM instances" page showing my vi
 
 ![VM-running](/Users/mac/Desktop/NLP/VM-running.png)
 
-
-
 #### 1.2 Programming
 
 * Plot the precision-recall curve for the existing classifier:
@@ -29,8 +27,6 @@ Following is the screenshot of my Google Cloud "VM instances" page showing my vi
 * Plot the precision-recall curve when the number of neighbors is 50 instead.
 
 ![precision_recall_curve50](/Users/mac/Desktop/NLP/hw0/precision_recall_curve50.png)
-
-需要写话？
 
 
 
@@ -50,7 +46,6 @@ $$
 \end{split}
 $$
 
-
 **ii)** 
 $$
 \begin{split}
@@ -63,8 +58,10 @@ $$
 
 #### 2.2 Maxima and minima
 
-From the expression of $f(x)$, we know that $f(x)$ is symmetrical about $x=1/2$. At the upper bound 0 and lower bound 1 of the domain of $x$, $f(x)$ is zero, i.e., $f(0) = f(1) = 0$.
-
+From the expression of $f(x)$, we know that $f(x)$ is symmetrical about $x=1/2$. Although $\log 0$ is not defined, as $x$ approaches the 0, $\lim_{x->0^+} x\log_2 x = 0$. So at the lower bound 0 or the upper bound 1 of the domain of $x$, the limit of $f(x)$ is 0: 
+$$
+\lim_{x->0^+} f(x) = \lim_{x->0^+} x\log_2 x = 0\\\lim_{x->1^-} f(x) = \lim_{x->0^+} x\log_2 x = 0
+$$
 We get the first and second derivatives of $f(x)$ as following:
 $$
 \begin{split}
@@ -74,7 +71,7 @@ f''(x) &= \frac{1}{\frac{x}{1-x}\ln2}\frac{(1-x)+x}{(1-x)^2} = \frac{1}{x(1-x)\l
 $$
  For $x \in (0,1)$, the first and second derivatives of $f(x)$ are continuous, which could help us find the maxima and minima.
 
-When $x = 1/2$, $f'(x) = 0$ and $f''(x) > 0$. So the **minima** of $f(x)$  for $x \in [0,1]$ is $f(1/2) = -1$.Since $f(x)$ is symmetrical about $x=1/2$, which is also the minima point and $f''(x)$ is positive over $x \in (0,1)$, the **maxima** of $f(x)$ for $x \in [0,1]$ is $f(0) = f(1) = 0$.
+When $x = 1/2$, $f'(x) = 0$ and $f''(x) > 0$. So the **minima** of $f(x)$  for $x \in [0,1]$ is $f(1/2) = -1$.Since $f(x)$ is symmetrical about $x=1/2$, which is also the minima point and $f''(x)$ is positive over $x \in (0,1)$, $f(x)$ increases as $x$ increases from 1/2 to 1. Also, $f(x)$ increases as $x$ decreases from 1/2 to 0. So the **maxima** of $f(x)$ for $x \in [0,1]$ is $f(0) = f(1) = 0$.
 
 
 
@@ -87,13 +84,13 @@ $$
 P(b,b,b) = P(b)P(b,b|b) P(b,b,b|b,b) = \frac{5}{10} * \frac{5-1}{10-1} * \frac{5-2}{10-2} = \frac{1}{12}
 $$
 
-
 #### 3.2 Bayes' rule
 
 Here event $X$ is the fact that I get a text from Maria about dogs, event Y is that the sender is Maria B and event Z is that the sender is Maria A. So using the Bayes' rule to calculate the probability this dog-content message is from Maria is:
 $$
 P(Y|X) = \frac{P(X|Y)P(Y)}{P(X)} = \frac{P(X|Y)P(Y)}{P(X|Y)P(Y)+P(X|Z)P(Z)} = \frac{90\%*50\%}{90\%*50\%+10\%*50\%} = 90\%.
 $$
+
 
 
 ### 4 Linear Algebra
@@ -129,20 +126,14 @@ $$
 $$
 So the correlation between the elements of $\bf{u}$ and $\bf{v}$ is equal to their cosine similarity.
 
-
-
 #### 4.2 Singular Value Decomposition
 
 **i)**  Since $M = U\Sigma V^T $, $U$ has the same number of rows as that of $M$, which is $m$ and $V^T$ has the same number of columns as that of $M$, which is $n$. So $V$ has $n$ rows. Since $U$ and $V$ are orthogonal matrices, they are both square matrices. So the dimension of $U$ is $m\times m$ and the dimension of $V$ is $n\times n$.
 
 According to the definition of matrix muplitication, the dimension of $\Sigma$ is $m\times n$ to make the multiplication between $U$ and $\Sigma$, $\Sigma$ and $V^T$ possible.
 
-
-
 **ii)** Since $U$ and $V$ are orthogonal matrices, the product of each matrix with its transpose are identity matrices, which means, $U U^T = I_m,\ V V^T = I_n$.
 
 If matrix $M$ is invertible, which means $m = n = \mathrm{rank}(M)$, the inverse of $M$ is $M^{-1} = V\Sigma^{-1}U^T$. Here $\Sigma$ is a symmetric diagonal matrics and all its diagonal entries are non-zero, so we could get $\Sigma^{-1}$ by replacing all the diagonal entries of $\Sigma$ with their reciprocal and have $\Sigma \Sigma^{-1} = I_m$. So $M M^{-1} = U\Sigma V^T V\Sigma^{-1}U^T =U\Sigma (V^T V)\Sigma^{-1}U^T  = U(\Sigma\Sigma^{-1})U^T = UU^T = I_m$, which suggests that $M^{-1} = V\Sigma^{-1}U^T$ is the inverse matrix of $M$ if $M$ is invertible.
 
-On the other hand, if matrix is not invertible, we could use SVD to get the pseudoinverse in the similar way: $M^{+} = V \Sigma^{+}U^T$. The difference here is that: $m$ may not equal to $n$ and min($m,n$) may not equal to the rank of $M$. $\Sigma^+$ is the pseudoinverse of $\Sigma$, which could be calculated by replacing every non-zero diagonal entry in $\Sigma$ by its reciprocal and transposing the resulting matrix. So $\Sigma \Sigma^+$ is a $m\times m$ diagonal matrix and all its non-zero diagonal entries are 1. Then $MM^+ = U\Sigma V^T V\Sigma^+U^T =  U(\Sigma\Sigma^{+})U^T$, which is also a  $m\times m$ diagonal matrix and all its non-zero diagonal entries are 1.
-
-???再改改,反之是n*n, 假定m>n>rank(M)=k.
+On the other hand, if matrix is not invertible, we could use SVD to get the pseudoinverse in the similar way: $M^{+} = V \Sigma^{+}U^T$. The difference here is that: $m$ may not equal to $n$ and min($m,n$) may not equal to the rank of $M$. $\Sigma^+$ is the pseudoinverse of $\Sigma$, which could be calculated by replacing every non-zero diagonal entry in $\Sigma$ by its reciprocal and transposing the resulting matrix. So $\Sigma \Sigma^+$ is a $m\times m$ diagonal matrix and all its non-zero diagonal entries are 1. Then $MM^+ = U\Sigma V^T V\Sigma^+U^T =  U(\Sigma\Sigma^{+})U^T$, which is also a  $m\times m$ diagonal matrix and all its non-zero diagonal entries are 1. Also, $M^+M = V\Sigma^+U^T U\Sigma V^T =  V(\Sigma^+\Sigma)V^T$, which is a $n\times n$ diagonal matrix and all its non-zero diagonal entries are 1.
