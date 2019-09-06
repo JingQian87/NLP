@@ -30,7 +30,7 @@ Following is the screenshot of my Google Cloud "VM instances" page showing my vi
 
 ![precision_recall_curve50](/Users/mac/Desktop/NLP/hw0/precision_recall_curve50.png)
 
-需要写话？放到google cloud上跑？
+需要写话？
 
 
 
