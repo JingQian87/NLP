@@ -1,4 +1,4 @@
-# python classify.py train-data.csv abortion
+# python classify.py stance-data.csv "abortion"
 
 import sys
 if not sys.warnoptions:
@@ -251,15 +251,23 @@ if __name__ == '__main__':
 	if topic == 'abortion':
 		#print('yes!')
 		#run_best(data, 500, MultinomialNB(alpha=1))
-		run(data, (500,1), method=1, NB=True, search=False)
-		run(data, (500, 'hinge', 1, 1000, None),method=1,NB=False,search=False)
+		# run(data, (500,1), method=1, NB=True, search=False)
+		# run(data, (500, 'hinge', 1, 1000, None),method=1,NB=False,search=False)
+		run(data, (500,1), method=2, NB=True, search=False)
+		run(data, (500, 'squared_hinge', 1, 1000, None),method=2,NB=False,search=False)
+		run(data, (500, 'hinge', 1, 1000, None),method=2,NB=False,search=False)
+		run(data, (500, 'hinge', 0.5, 1000, None),method=2,NB=False,search=False)
 	# 	#run_best(data, 500, LinearSVC(C=0.5, loss='hinge'))
 	# 	# print("Method2")
 	# 	#run_best(data, 1000, MultinomialNB(alpha=1), method=2)
 	# 	#run_best(data, 500, LinearSVC(C=1, loss='squared_hinge',max_iter=1000,class_weight=None),method=2)
 	# 	#run_best(data, 20, SGDClassifier(alpha=0.01,loss='hinge',penalty=None),method=2)
 	# 	#run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
-	# elif topic == 'gay rights':
+	elif topic == 'gay rights':
+		run(data, (50, 'hinge', 50, 3000, None), method=1, NB=False,search=False)
+		run(data, (50,1), method=1, NB=True,search=False)
+		run(data, (50, 'hinge', 1, 1000, None),method=2,NB=False,search=False)
+		run(data, (50, 'hinge', 0.5, 1000, None),method=2,NB=False,search=False)
 	# 	#run_best(data, 100, SGDClassifier(alpha=0.1,loss='modified_huber',penalty='l1'))
 	# 	#run_best(data, 50, MultinomialNB(alpha=1))
 	# 	#run_best(data, 50, LinearSVC(C=50, loss='hinge', max_iter=3000))
@@ -268,4 +276,14 @@ if __name__ == '__main__':
 
 #run_best(selected, k, clf, method=1):
 
-
+# MultinomialNB
+# 0.6283767892623981
+# clf__alpha: 1
+# exf__k: 50
+# LinearSVC
+# 0.6320776394577132
+# clf__C: 50
+# clf__class_weight: None
+# clf__loss: 'hinge'
+# clf__max_iter: 3000
+# exf__k: 50

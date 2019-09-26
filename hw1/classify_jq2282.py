@@ -2,8 +2,8 @@
 
 import sys
 if not sys.warnoptions:
-    import warnings
-    warnings.simplefilter("ignore")
+	import warnings
+	warnings.simplefilter("ignore")
 
 import numpy as np
 import pandas as pd
@@ -120,7 +120,7 @@ def MySearch(selected, NB=True, method=2):
 			comb_NB.append((params_NB['exf_k'][i], params_NB['clf_alpha'][j]))
 	#print(comb_NB[:6])
 	params_SVM = {
-    	'exf_k':[50,100,500,1000],
+		'exf_k':[50,100,500,1000],
 		'clf_loss':['hinge','squared_hinge'],
 		'clf_C': [1, 10, 50,100],
 		'clf_max_iter':[1000,2000,3000],
@@ -159,9 +159,8 @@ def run_best(selected, paras, method=1, NB=False):
 	else:
 		clf = LinearSVC(loss=paras[1],C=paras[2],max_iter=paras[3],class_weight=paras[4])
 
+	X = selected[:,0]
 	Y = selected[:,3]
-	if method==1:
-		X = selected[:,0]
 	skf = StratifiedKFold(n_splits=kfolds)
 	ifold = 0
 	for train_index, test_index in skf.split(X, Y):
@@ -170,6 +169,9 @@ def run_best(selected, paras, method=1, NB=False):
 
 		trainX = cv.fit_transform(trainX)
 		testX = cv.transform(testX)
+		if method == 2:
+			trainX = hstack((trainX, selected[train_index, 6:9].astype(float)))
+			testX = hstack((testX, selected[test_index, 6:9].astype(float)))
 		trainX = kBest.fit_transform(trainX, trainY)
 		testX = kBest.transform(testX)
 
@@ -214,9 +216,12 @@ def top20(dataX, dataY):
 abortion-Ngrams
 run_best(data, (500,1), method=1, NB=True)->0.6118
 run_best(data, (500, 'hinge', 1, 1000, None),method=1,NB=False)->0.6194
+abortion-Others
+run_best(data, (500, 0.1), method=2, NB=True)->0.6177
+run_best(data, (50, 'squared_hinge', 1, 2000, None),method=2,NB=False)->0.614
 
-
-MySearch(selected, NB=True, method=2)->0.617679340090206 (500, 0.1)
+Gay rights-Others
+0.6306178446399848 (50, 'squared_hinge', 50, 3000, 'balanced')
 
 """
 
@@ -228,10 +233,10 @@ if __name__ == '__main__':
 	topic = sys.argv[2]
 	data = load_data(sys.argv[1],topic)
 
-	best_score, best_paras = MySearch(data)
-	print(best_score, best_paras)
+	#best_score, best_paras = MySearch(data, NB=False, method=2)
+	#print(best_score, best_paras)
 
-
+	#run_best(data, (500, 0.1),method=2,NB=True)
 	# if topic == "abortion":
 	# 	#run_best(data, (500, 'hinge', 1, 1000, None),method=1,NB=False)
 	# 	run(data, (500,1), method=2, NB=True, search=False)#0.6153
@@ -248,18 +253,24 @@ if __name__ == '__main__':
 	#gay rights NB best: (0.6273062730627307, (1000, 1))
 
 
+# MySearch(data, NB=True, method=2)->0.617679340090206 (500, 0.1)
+# MySearch(data, NB=False, method=2)->0.6182572756426745 (50, 'squared_hinge', 10, 3000, None)
+
 	# run Ngrams
 	# LinearSVC is slightly better than MultinomialNB
-	# if topic == 'abortion':
-	# 	run_best(data, 500, MultinomialNB(alpha=1))
-	# 	run(data, (500,1), method=1, NB=True, search=False)
-	# 	#run_best(data, 500, LinearSVC(C=0.5, loss='hinge'))
-	# 	# print("Method2")
-	# 	#run_best(data, 1000, MultinomialNB(alpha=1), method=2)
-	# 	#run_best(data, 500, LinearSVC(C=1, loss='squared_hinge',max_iter=1000,class_weight=None),method=2)
+	if topic == 'abortion':
+		#run_best(data, 500, MultinomialNB(alpha=1))
+		run(data, (500,1), method=1, NB=True, search=False)
+	# # 	#run_best(data, 500, LinearSVC(C=0.5, loss='hinge'))
+	# 	print("Method2")
+	# 	run_best(data, (500, 0.1), method=2, NB=True)
+	# 	run(data, (50, 'squared_hinge', 1, 2000, None),method=2,NB=False)
+
 	# 	#run_best(data, 20, SGDClassifier(alpha=0.01,loss='hinge',penalty=None),method=2)
 	# 	#run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
-	# elif topic == 'gay rights':
+	elif topic == 'gay rights':
+		run(data, (50, 'squared_hinge', 50, 3000, None), method=2, NB=False,search=False)
+		run_best(data, (50, 'squared_hinge', 50, 3000, None),method=2, NB=False)
 	# 	#run_best(data, 100, SGDClassifier(alpha=0.1,loss='modified_huber',penalty='l1'))
 	# 	#run_best(data, 50, MultinomialNB(alpha=1))
 	# 	#run_best(data, 50, LinearSVC(C=50, loss='hinge', max_iter=3000))
