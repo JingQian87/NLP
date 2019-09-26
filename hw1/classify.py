@@ -55,10 +55,10 @@ def load_data(filename, topic):
 	selected = np.random.permutation(selected)
 	return selected
 
-def get_features(selected, method):
+def get_features(selected, method=1):
 	X = CountVectorizer(stop_words='english', ngram_range=(1,3))
 	X = X.fit_transform(selected[:,0])
-	if method != "Ngrams":
+	if method != 1:
 		X = hstack((X, selected[:,5:8].astype(float)))
 	return X
 
@@ -96,17 +96,24 @@ def train_Ngrams_GridSearch(x, y):
 		print("%s: %r" % (param_name, gs.best_params_[param_name]))
 
 
-def run_Ngrams(x, y, clf):
-	k = 5
-	test_size = len(y)//k
+def run_best(selected, k, clf, method=1):
+	kfolds = 5
+	test_size = len(selected)//kfolds
 	score = 0
 	f1 = 0
-	for i in range(k):
-		testX = x[i*test_size:(i+1)*test_size]
-		testY = y[i*test_size:(i+1)*test_size]
-		trainX = vstack((x[:i*test_size,:],x[(i+1)*test_size:,:]))
-		trainY = np.concatenate((y[:i*test_size],y[(i+1)*test_size:]))
-		print('fold: %d, train size: %d, test size: %d' %(i,len(trainY),len(testY)))
+	for i in range(kfolds):
+		test = selected[i*test_size:(i+1)*test_size]
+		train = np.vstack((selected[:i*test_size,:],selected[(i+1)*test_size:,:]))
+		print('fold: %d, train size: %d, test size: %d' %(i,len(train),len(test)))
+
+		trainY = train[:,3]
+		testY = test[:,3]
+		trainX = get_features(train, method)
+		kBest = SelectKBest(chi2, k=k)
+		trainX = kBest.fit_transform(trainX, trainY)
+		testX = get_features(test,method)
+		testX = kBest.transform(testX)
+
 		clf.fit(trainX, trainY)
 		pred = clf.predict(testX)
 		score += metrics.accuracy_score(testY, pred)
@@ -123,25 +130,23 @@ if __name__ == '__main__':
 
 	topic = sys.argv[2]
 	data = load_data(sys.argv[1],topic)
-	y = data[:,3]
-
-	Ngrams = True
-	if Ngrams:
-		X = get_features(data, "Ngrams")
-		# Find best model for Ngrams:
-		#train_Ngrams_GridSearch(X, y)
-
-		# run Ngrams
-		if topic == 'abortion':
-			X_selected = SelectKBest(chi2, k=500).fit_transform(X,y)
-			run_Ngrams(X_selected, y, MultinomialNB(alpha=1))
-			run_Ngrams(X_selected, y, LinearSVC(C=1, loss='hinge'))
-		elif topic == 'gay rights':
-			X_selected = SelectKBest(chi2, k=500).fit_transform(X,y)
-			run_Ngrams(X_selected, y, MultinomialNB(alpha=1))
-			run_Ngrams(X_selected, y, LinearSVC(C=1, loss='hinge'))
 
 
+	# Find best model for Ngrams:
+	# if Ngrams:
+	# 	X_search = get_features(data)
+	#	y = data[:,3]
+		#train_Ngrams_GridSearch(X_search, y)
 
+	# run Ngrams
+	if topic == 'abortion':
+		run_best(data, 500, MultinomialNB(alpha=1))
+			#run_Ngrams(X_selected, y, LinearSVC(C=1, loss='hinge'))
+		# elif topic == 'gay rights':
+		# 	run_Ngrams(data, k = 50, MultinomialNB(alpha=1))
+		# 	run_Ngrams(X_selected, y, LinearSVC(C=1, loss='hinge'))
+
+
+#run_best(selected, k, clf, method=1):
 
 
