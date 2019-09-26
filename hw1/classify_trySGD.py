@@ -15,6 +15,7 @@ from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 from sklearn.svm import SVC, LinearSVC
+from sklearn.linear_model import SGDClassifier
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.model_selection import GridSearchCV
 from scipy.sparse import hstack, vstack
@@ -57,49 +58,30 @@ def load_data(filename, topic):
 
 
 def train_Ngrams_GridSearch(selected, method=1):
-	# Use Naive Bayes classifier
-	pipe = Pipeline([
-		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
-    ('exf', SelectKBest(chi2)),
-    ('clf', MultinomialNB()),
-])
-	params = {
-    'exf__k':(20,50,100,500,1000,2000),
-    'clf__alpha':(1,0.5,1e-1,1e-2,1e-3),
-}
-	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
-	gs = gs.fit(selected[:,0], selected[:,3])
-	print(gs.best_score_)
-	for param_name in sorted(params.keys()):
-		print("%s: %r" % (param_name, gs.best_params_[param_name]))
-# 0.6118245271046628
-# clf__alpha: 1
-# exf__k: 500
-
 	# Use SVM classifier
 	pipe = Pipeline([
 		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
 		('exf', SelectKBest(chi2)),
-		('clf', LinearSVC()),
+		('clf', SGDClassifier())
 ])
 	params = {
 		'exf__k':[50,100,500,1000],
-		'clf__loss':['hinge','squared_hinge'],
-		'clf__C': [1, 10, 50,100],
-		'clf__max_iter':[1000,2000,3000],
-		'clf__class_weight':[None,'balanced']}
+		'clf__alpha':(1,1e-1,1e-2,1e-3),
+		'clf__penalty':('l1','l2','None'),
+		'clf__loss':('hinge', 'log', 'modified_huber', 'squared_hinge'),
+		#'clf__max_iter':(1000,3000,5000),
+		}
 	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
 	gs = gs.fit(selected[:,0], selected[:,3])
 	print(gs.best_score_)
 	for param_name in sorted(params.keys()):
 		print("%s: %r" % (param_name, gs.best_params_[param_name]))
-# 0.6229339232734818
-# clf__C: 1
-# clf__class_weight: None
+# 0.632937181663837
+# clf__alpha: 0.1
 # clf__loss: 'hinge'
-# clf__max_iter: 1000
-# exf__k: 500
-
+# clf__penalty: 'l2'
+# exf__k: 1000
+# slightly higher than LinearSVC, longer running, but similar in the run_best.
 
 def run_best(selected, k, clf, method=1):
 	kfolds = 5
@@ -140,16 +122,17 @@ if __name__ == '__main__':
 
 
 	# Find best model for Ngrams:
-	#train_Ngrams_GridSearch(data)
+	train_Ngrams_GridSearch(data)
 
 	# run Ngrams
 	# LinearSVC is slightly better than MultinomialNB
-	if topic == 'abortion':
-		#run_best(data, 500, MultinomialNB(alpha=1))
-		run_best(data, 500, LinearSVC(C=1, loss='hinge'))
-	elif topic == 'gay rights':
-		#run_best(data, 50, MultinomialNB(alpha=1))
-		run_best(data, 50, LinearSVC(C=50, loss='hinge', max_iter=3000))
+	# if topic == 'abortion':
+	# 	run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
+	# 	#run_best(data, 500, MultinomialNB(alpha=1))
+	# 	run_best(data, 500, LinearSVC(C=1, loss='hinge'))
+	# elif topic == 'gay rights':
+	# 	#run_best(data, 50, MultinomialNB(alpha=1))
+	# 	run_best(data, 50, LinearSVC(C=50, loss='hinge', max_iter=3000))
 
 
 #run_best(selected, k, clf, method=1):
