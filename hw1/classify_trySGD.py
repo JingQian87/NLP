@@ -62,26 +62,56 @@ def train_Ngrams_GridSearch(selected, method=1):
 	pipe = Pipeline([
 		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
 		('exf', SelectKBest(chi2)),
-		('clf', SGDClassifier())
-])
-	params = {
+		('clf', SVC(kernel='rbf')),
+	])
+	params =  {
 		'exf__k':[50,100,500,1000],
-		'clf__alpha':(1,1e-1,1e-2,1e-3),
-		'clf__penalty':('l1','l2','None'),
-		'clf__loss':('hinge', 'log', 'modified_huber', 'squared_hinge'),
-		#'clf__max_iter':(1000,3000,5000),
-		}
+		'clf__gamma': [1e-3, 5e-3, 1e-4],
+		'clf__C': [0.1,1, 10, 50, 100]
+	}
 	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
 	gs = gs.fit(selected[:,0], selected[:,3])
 	print(gs.best_score_)
 	for param_name in sorted(params.keys()):
 		print("%s: %r" % (param_name, gs.best_params_[param_name]))
+# python classify_trySGD.py stance-data.csv "abortion"
+# 0.6129906878633534
+# clf__C: 50
+# clf__gamma: 0.001
+# exf__k: 1000
+
+
+# 	pipe = Pipeline([
+# 		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
+# 		('exf', SelectKBest(chi2)),
+# 		('clf', SGDClassifier())
+# ])
+# 	params = {
+# 		'exf__k':[50,100,500,1000],
+# 		'clf__alpha':(1,1e-1,1e-2,1e-3),
+# 		'clf__penalty':('l1','l2','None'),
+# 		'clf__loss':('hinge', 'log', 'modified_huber', 'squared_hinge'),
+# 		#'clf__max_iter':(1000,3000,5000),
+# 		}
+# 	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
+# 	gs = gs.fit(selected[:,0], selected[:,3])
+# 	print(gs.best_score_)
+# 	for param_name in sorted(params.keys()):
+# 		print("%s: %r" % (param_name, gs.best_params_[param_name]))
+#abortion
 # 0.632937181663837
 # clf__alpha: 0.1
 # clf__loss: 'hinge'
 # clf__penalty: 'l2'
 # exf__k: 1000
 # slightly higher than LinearSVC, longer running, but similar in the run_best.
+
+#gay rights
+# 0.6423881161888542
+# clf__alpha: 0.1
+# clf__loss: 'modified_huber'
+# clf__penalty: 'l1'
+# exf__k: 100
 
 def run_best(selected, k, clf, method=1):
 	kfolds = 5
@@ -128,9 +158,10 @@ if __name__ == '__main__':
 	# LinearSVC is slightly better than MultinomialNB
 	# if topic == 'abortion':
 	# 	run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
-	# 	#run_best(data, 500, MultinomialNB(alpha=1))
-	# 	run_best(data, 500, LinearSVC(C=1, loss='hinge'))
+	# # 	#run_best(data, 500, MultinomialNB(alpha=1))
+	# # 	run_best(data, 500, LinearSVC(C=1, loss='hinge'))
 	# elif topic == 'gay rights':
+	# 	run_best(data, 100, SGDClassifier(alpha=0.1,loss='modified_huber',penalty='l1'))
 	# 	#run_best(data, 50, MultinomialNB(alpha=1))
 	# 	run_best(data, 50, LinearSVC(C=50, loss='hinge', max_iter=3000))
 
