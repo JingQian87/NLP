@@ -19,33 +19,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.model_selection import GridSearchCV
 from scipy.sparse import hstack, vstack
-
-#def best_params(topic, method):
-# topic == 'abortion' and method == 'Ngrams', MultinomialNB
-# 0.6118245271046628
-# clf__alpha: 1
-# exf__k: 500	
-
-# topic == 'abortion' and method == 'Ngrams', LinearSVC
-# accuracy = 0.6229 with params:
-# clf__C: 1
-# clf__class_weight: None
-# clf__loss: 'hinge'
-# clf__max_iter: 1000
-# exf__k: 500
-
-# topic == 'gay rights' and method == 'Ngrams'
-# MultinomialNB
-# 0.6283767892623981
-# clf__alpha: 1
-# exf__k: 50
-# LinearSVC
-# 0.6320776394577132
-# clf__C: 50
-# clf__class_weight: None
-# clf__loss: 'hinge'
-# clf__max_iter: 3000
-# exf__k: 50
+from sklearn.model_selection import StratifiedKFold
 
 def load_data(filename, topic):
 	raw = pd.read_csv(filename)
@@ -56,96 +30,7 @@ def load_data(filename, topic):
 	selected = np.random.permutation(selected)
 	return selected
 
-
-def train_Ngrams_GridSearch(selected, method=1):
-	# Use Naive Bayes classifier
-# 	pipe = Pipeline([
-# 		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
-#     ('exf', SelectKBest(chi2)),
-#     ('clf', MultinomialNB()),
-# ])
-# 	params = {
-#     'exf__k':(20,50,100,500,1000,2000),
-#     'clf__alpha':(1,0.5,1e-1,1e-2,1e-3),
-# }
-# 	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
-# 	gs = gs.fit(selected[:,0], selected[:,3])
-# 	print(gs.best_score_)
-# 	for param_name in sorted(params.keys()):
-# 		print("%s: %r" % (param_name, gs.best_params_[param_name]))
-# 0.6118245271046628
-# clf__alpha: 1
-# exf__k: 500
-
-	# Use SVM classifier
-	pipe = Pipeline([
-		('vect', CountVectorizer(stop_words='english', ngram_range=(1,3))),
-		('exf', SelectKBest(chi2)),
-		('clf', LinearSVC()),
-])
-	params = {
-		'exf__k':[50,100,250, 500,750,1000],
-		'clf__loss':['hinge','squared_hinge'],
-		'clf__C': [0.5,1, 5,10, 50,100],
-		'clf__max_iter':[1000,2000,3000],}
-		#'clf__class_weight':[None,'balanced']}
-	gs = GridSearchCV(pipe, params, cv=5, iid=False, n_jobs=-1)
-	gs = gs.fit(selected[:,0], selected[:,3])
-	print(gs.best_score_)
-	for param_name in sorted(params.keys()):
-		print("%s: %r" % (param_name, gs.best_params_[param_name]))
-# 0.6229339232734818
-# clf__C: 1
-# clf__class_weight: None
-# clf__loss: 'hinge'
-# clf__max_iter: 1000
-# exf__k: 500
-
-# 0.6229424979849428
-# clf__C: 0.5
-# clf__loss: 'hinge'
-# clf__max_iter: 1000
-# exf__k: 500
-
-def run_best(selected, k, clf, method=1):
-	analyze = False
-
-	kfolds = 5
-	test_size = len(selected)//kfolds
-	score = 0
-	f1 = 0
-	cv = CountVectorizer(stop_words='english', ngram_range=(1,3))
-	kBest = SelectKBest(chi2, k=k)
-	for i in range(kfolds):
-		test = selected[i*test_size:(i+1)*test_size]
-		train = np.vstack((selected[:i*test_size,:],selected[(i+1)*test_size:,:]))
-		#print('fold',i,train[:2,0])
-		#print('fold: %d, train size: %d, test size: %d' %(i,len(train),len(test)))
-
-		trainY = train[:,3]
-		testY = test[:,3]
-
-		trainX = cv.fit_transform(train[:,0])
-		testX = cv.transform(test[:,0])
-		if method == 2:
-			trainX = hstack((trainX, train[:,6:9].astype(float)))
-			testX = hstack((testX, test[:,6:9].astype(float)))
-		trainX = kBest.fit_transform(trainX, trainY)
-		testX = kBest.transform(testX)
-
-		clf.fit(trainX, trainY)
-		pred = clf.predict(testX)
-		score += metrics.accuracy_score(testY, pred)
-		#average in f1 could be any of 'macro','micro','weighted'
-		f1 += metrics.f1_score(testY, pred, average='micro')
-
-		# if analyze and i==2:
-		# 	print(metrics.accuracy_score(testY, pred))
-
-
-	print("The averaged accuracy score of 5-fold cv is %0.4f and f1 score is %0.2f." %(score/5, f1/5))
-
-def run(selected, paras, method=1, NB=True, search=False):
+def runold(selected, paras, method=1, NB=True, search=False):
 	kfolds = 5
 	test_size = len(selected)//kfolds
 	score,f1 = 0,0
@@ -181,7 +66,45 @@ def run(selected, paras, method=1, NB=True, search=False):
 		#average in f1 could be any of 'macro','micro','weighted'
 		f1 += metrics.f1_score(testY, pred, average='micro')
 	if not search:
-		print("The averaged accuracy score of 5-fold cv is %0.2f and f1 score is %0.2f." %(score/5, f1/5))
+		print("The averaged accuracy score of 5-fold cv is %0.4f and f1 score is %0.4f." %(score/5, f1/5))
+	else:
+		return score/5
+
+def run(selected, paras, method=1, NB=True, search=False):
+	kfolds = 5
+	score,f1 = 0,0
+
+	cv = CountVectorizer(stop_words='english', ngram_range=(1,3))
+	exf_k = paras[0]
+	kBest = SelectKBest(chi2, k=exf_k)
+	if NB:
+		clf = MultinomialNB(alpha=paras[1])
+	else:
+		clf = LinearSVC(loss=paras[1],C=paras[2],max_iter=paras[3],class_weight=paras[4])
+
+	Y = selected[:,3]
+	X = selected[:,0]
+	skf = StratifiedKFold(n_splits=kfolds)#random_state=None, shuffle=False
+	for train_index, test_index in skf.split(X, Y):
+		#print("TRAIN:", train_index, "TEST:", test_index)
+		trainX, testX = X[train_index], X[test_index]
+		trainY, testY = Y[train_index], Y[test_index]
+
+		trainX = cv.fit_transform(trainX)
+		testX = cv.transform(testX)
+		if method == 2:
+			trainX = hstack((trainX, selected[train_index, 6:9].astype(float)))
+			testX = hstack((testX, selected[test_index, 6:9].astype(float)))
+		trainX = kBest.fit_transform(trainX, trainY)
+		testX = kBest.transform(testX)
+
+		clf.fit(trainX, trainY)
+		pred = clf.predict(testX)
+		score += metrics.accuracy_score(testY, pred)
+		#average in f1 could be any of 'macro','micro','weighted'
+		f1 += metrics.f1_score(testY, pred, average='micro')
+	if not search:
+		print("The averaged accuracy score of 5-fold cv is %0.4f and f1 score is %0.2f." %(score/5, f1/5))
 	else:
 		return score/5
 
@@ -224,7 +147,78 @@ def MySearch(selected, NB=True, method=2):
 			best_paras = ipar
 	return best_score, best_paras
 
+def run_best(selected, paras, method=1, NB=False):
+	kfolds = 5
+	score,f1 = 0,0
 
+	cv = CountVectorizer(stop_words='english', ngram_range=(1,3))
+	exf_k = paras[0]
+	kBest = SelectKBest(chi2, k=exf_k)
+	if NB:
+		clf = MultinomialNB(alpha=paras[1])
+	else:
+		clf = LinearSVC(loss=paras[1],C=paras[2],max_iter=paras[3],class_weight=paras[4])
+
+	Y = selected[:,3]
+	if method==1:
+		X = selected[:,0]
+	skf = StratifiedKFold(n_splits=kfolds)
+	ifold = 0
+	for train_index, test_index in skf.split(X, Y):
+		trainX, testX = X[train_index], X[test_index]
+		trainY, testY = Y[train_index], Y[test_index]
+
+		trainX = cv.fit_transform(trainX)
+		testX = cv.transform(testX)
+		trainX = kBest.fit_transform(trainX, trainY)
+		testX = kBest.transform(testX)
+
+		clf.fit(trainX, trainY)
+		pred = clf.predict(testX)
+		scorei = metrics.accuracy_score(testY, pred)
+		#print(scorei)
+
+		ifold += 1
+		score += scorei
+		#average in f1 could be any of 'macro','micro','weighted'
+		f1 += metrics.f1_score(testY, pred, average='micro')
+
+		#if ifold == 2:
+			#top20(X[train_index], Y[train_index])
+
+		# 他的k_feature_matrix = trainX, 
+		# k_feature)index = kBest.get_support()
+  #   # get the top 20 
+  #   _, top20_feature_index = select_k_features(feature_matrix_dict['feature_matrix'], labels, k = 20)
+  #   model.top20_feature_names = np.array(feature_matrix_dict['feature_names'])[top20_feature_index]
+	print("The averaged accuracy score of 5-fold cv is %0.4f and f1 score is %0.4f." %(score/5, f1/5))
+
+def top20(dataX, dataY):
+	cv = CountVectorizer(stop_words='english', ngram_range=(1,3))
+	dataX = cv.fit_transform(dataX)
+	names = cv.get_feature_names()
+	#print(names)
+	kBest = SelectKBest(chi2, k=20)
+	k_feature = kBest.fit_transform(dataX, dataY)
+	k_feature_index = kBest.get_support()
+	#print(k_feature_index)
+
+	res = []
+	for i in k_feature_index:
+		res.append(names[i])
+	print(len(k_feature_index),len(res))
+	return res
+
+#def params():
+"""
+abortion-Ngrams
+run_best(data, (500,1), method=1, NB=True)->0.6118
+run_best(data, (500, 'hinge', 1, 1000, None),method=1,NB=False)->0.6194
+
+
+MySearch(selected, NB=True, method=2)->0.617679340090206 (500, 0.1)
+
+"""
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
@@ -233,6 +227,14 @@ if __name__ == '__main__':
 
 	topic = sys.argv[2]
 	data = load_data(sys.argv[1],topic)
+
+	best_score, best_paras = MySearch(data)
+	print(best_score, best_paras)
+
+
+	# if topic == "abortion":
+	# 	#run_best(data, (500, 'hinge', 1, 1000, None),method=1,NB=False)
+	# 	run(data, (500,1), method=2, NB=True, search=False)#0.6153
 
 
 	# Find best model for Ngrams:
@@ -248,11 +250,9 @@ if __name__ == '__main__':
 
 	# run Ngrams
 	# LinearSVC is slightly better than MultinomialNB
-	if topic == 'abortion':
-		#print('yes!')
-		#run_best(data, 500, MultinomialNB(alpha=1))
-		run(data, (500,1), method=1, NB=True, search=False)
-		run(data, (500, 'hinge', 1, 1000, None),method=1,NB=False,search=False)
+	# if topic == 'abortion':
+	# 	run_best(data, 500, MultinomialNB(alpha=1))
+	# 	run(data, (500,1), method=1, NB=True, search=False)
 	# 	#run_best(data, 500, LinearSVC(C=0.5, loss='hinge'))
 	# 	# print("Method2")
 	# 	#run_best(data, 1000, MultinomialNB(alpha=1), method=2)
