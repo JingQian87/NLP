@@ -7,7 +7,7 @@ if not sys.warnoptions:
 
 import numpy as np
 import pandas as pd
-np.random.seed(4705)
+#np.random.seed(4705)
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -53,7 +53,7 @@ def load_data(filename, topic):
 	print("Column names: ", raw.columns)
 
 	selected = raw[raw.topic == topic]
-	selected = np.random.permutation(selected)
+	selected = np.random.RandomState(seed=4705).permutation(selected)
 	return selected
 
 
@@ -121,9 +121,10 @@ def run_best(selected, k, clf, method=1):
 	cv = CountVectorizer(stop_words='english', ngram_range=(1,3))
 	kBest = SelectKBest(chi2, k=k)
 	for i in range(kfolds):
-		test = selected[i*test_size:(i+1)*test_size]
+		test = selected[i*test_size:(i+1)*test_size,:]
 		train = np.vstack((selected[:i*test_size,:],selected[(i+1)*test_size:,:]))
-		print('fold: %d, train size: %d, test size: %d' %(i,len(train),len(test)))
+		print(np.shape(train),np.shape(test))
+		#print('fold: %d, train size: %d, test size: %d' %(i,len(train),len(test)))
 
 		trainY = train[:,3]
 		testY = test[:,3]
@@ -135,10 +136,12 @@ def run_best(selected, k, clf, method=1):
 
 		clf.fit(trainX, trainY)
 		pred = clf.predict(testX)
-		score += metrics.accuracy_score(testY, pred)
+		tmp = metrics.accuracy_score(testY, pred)
+		print(tmp)
+		score += tmp
 		#average in f1 could be any of 'macro','micro','weighted'
 		f1 += metrics.f1_score(testY, pred, average='micro')
-	print("The averaged accuracy score of 5-fold cv is %0.2f and f1 score is %0.2f." %(score/5, f1/5))
+	print("The averaged accuracy score of 5-fold cv is %0.4f and f1 score is %0.2f." %(score/5, f1/5))
 
 
 
@@ -152,14 +155,14 @@ if __name__ == '__main__':
 
 
 	# Find best model for Ngrams:
-	train_Ngrams_GridSearch(data)
+	#train_Ngrams_GridSearch(data)
 
 	# run Ngrams
 	# LinearSVC is slightly better than MultinomialNB
-	# if topic == 'abortion':
-	# 	run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
+	if topic == 'abortion':
+		#run_best(data, 1000, SGDClassifier(alpha=0.1,loss='hinge',penalty='l2'))
 	# # 	#run_best(data, 500, MultinomialNB(alpha=1))
-	# # 	run_best(data, 500, LinearSVC(C=1, loss='hinge'))
+		run_best(data, 500, LinearSVC(C=1, loss='hinge'))
 	# elif topic == 'gay rights':
 	# 	run_best(data, 100, SGDClassifier(alpha=0.1,loss='modified_huber',penalty='l1'))
 	# 	#run_best(data, 50, MultinomialNB(alpha=1))
