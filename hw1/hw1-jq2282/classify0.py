@@ -23,7 +23,6 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.model_selection import GridSearchCV
 from scipy.sparse import hstack, vstack
-import string
 
 def loadData(filename, topic):
 	"""
@@ -32,24 +31,12 @@ def loadData(filename, topic):
 	"""
 	raw = pd.read_csv(filename)
 	print("Loading %s with %d records" %(filename,len(raw)))
-	print("Column names: ", raw.columns)
+	#print("Column names: ", raw.columns)
 
 	selected = raw[raw.topic == topic]
 	selected = np.random.permutation(selected)
 	return selected
 
-def repeatedPunc(text):
-	"""
-	Add number of repeated punctuations as feature.
-	"""
-	rp = ['??', '??????', '!!!', '?!']
-	counts = np.zeros((len(text),1))
-	for i in range(len(text)):
-		count = 0
-		for j in rp:
-			count += text[i].strip().count(j)
-		counts[i] = count
-	return counts
 
 def mySearch(selected, NB=True, method=2):
 	"""
@@ -112,7 +99,7 @@ def run(selected, paras, method=1, NB=True, search=False, example=False):
 		6. example: denotes whether to output the wrongly-classified post texts.
 	Output: 
 		1. Top 20 features from the best model for each topic. In our case, both best models are Ngrams.
-		2. When example is turned on, the classification report and confusion matrix are printed with 15 wrongly-classified post texts.
+		2. When example is turned on, the classification report and confusion matrix are printed with 5 wrongly-classified post texts.
 	"""
 
 	kfolds = 5
@@ -139,13 +126,7 @@ def run(selected, paras, method=1, NB=True, search=False, example=False):
 		# After tuning, found choosing only 3 out of 6 LIWC features gives best accuracy: 'words_pronom', 'words_per_sen', 'words_over_6'. 
 		if method == 2: 
 			trainX = hstack((trainX, train[:,6:9].astype(float)))
-			trainX = hstack((trainX, train[:,-3:].astype(float)))
-			trainC = repeatedPunc(train[:,0])
-			trainX = hstack((trainX, trainC[:,-1:].astype(float)))
 			testX = hstack((testX, test[:,6:9].astype(float)))
-			testX = hstack((testX, test[:,-3:].astype(float)))
-			testC = repeatedPunc(test[:,0])
-			testX = hstack((testX, testC[:,-1:].astype(float)))
 		trainX = kBest.fit_transform(trainX, trainY)
 		testX = kBest.transform(testX)
 
@@ -187,7 +168,7 @@ def top20(dataX, dataY):
 
 def analyze(test, testX, clf):
 	"""
-	Output 15 wrongly-classified post texts from test data for error analysis.
+	Output 5 wrongly-classified post texts from test data for error analysis.
 	Input:
 		1. test: test data.
 		2. testX: features extracted from test data.
@@ -214,15 +195,15 @@ if __name__ == '__main__':
 	data = loadData(sys.argv[1],topic)
 
 	# Uncomment the following line to enable parameter search.
-	mySearch(data, NB=False, method=2)
+	#mySearch(data, NB=False, method=2)
 
 	# Run best two models for each topic.
 	if topic == 'abortion':
-		run(data, (500, 'hinge', 1, 1000, None),method=1, NB=False,search=False, example=False)
-		run(data, (500, 'hinge', 1, 1000, None),method=2, NB=False,search=False)
+		run(data, (500, 'hinge', 1, 1000, None),method=1, NB=False,search=False, example=True)
+		run(data, (500, 'hinge', 0.5, 1000, None),method=2, NB=False,search=False)
 	elif topic == 'gay rights':
-		run(data, (50,1), method=1, NB=True, search=False, example=False)
-		run(data, (50, 'hinge', 1, 1000, None),method=2, NB=False,search=False)
+		run(data, (50,1), method=1, NB=True, search=False, example=True)
+		run(data, (50, 'hinge', 0.5, 1000, None),method=2, NB=False,search=False)
 
 
 

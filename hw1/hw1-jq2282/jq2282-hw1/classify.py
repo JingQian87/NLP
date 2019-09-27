@@ -214,7 +214,7 @@ if __name__ == '__main__':
 	data = loadData(sys.argv[1],topic)
 
 	# Uncomment the following line to enable parameter search.
-	mySearch(data, NB=False, method=2)
+	#mySearch(data, NB=False, method=2)
 
 	# Run best two models for each topic.
 	if topic == 'abortion':
