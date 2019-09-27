@@ -1,4 +1,8 @@
 # python classify.py stance-data.csv "abortion"
+"""
+In this script, Naive Bayes and SVM classifiers are used for stance classification on given dataset. Two types of models are trained and tested: Ngrams and Other features. For each model, the parameters are searched in function mySearch(). The best parameter combination for each model is already implement in the main function.
+09/26/2019 by Jing Qian (jq2282@columbia.edu).
+"""
 
 import sys
 if not sys.warnoptions:
@@ -193,16 +197,13 @@ if __name__ == '__main__':
 	# Uncomment the following line to enable parameter search.
 	#mySearch(data, NB=False, method=2)
 
+	# Run best two models for each topic.
 	if topic == 'abortion':
-		run(data, (500, 'hinge', 1, 1000, None),method=1,NB=False,search=False, example=True)
-		run(data, (500, 'hinge', 0.5, 1000, None),method=2,NB=False,search=False)
+		run(data, (500, 'hinge', 1, 1000, None),method=1, NB=False,search=False, example=True)
+		run(data, (500, 'hinge', 0.5, 1000, None),method=2, NB=False,search=False)
 	elif topic == 'gay rights':
-		run(data, (50,1), method=1, NB=True,search=False, example=True)
-		run(data, (50, 'hinge', 0.5, 1000, None),method=2,NB=False,search=False)
+		run(data, (50,1), method=1, NB=True, search=False, example=True)
+		run(data, (50, 'hinge', 0.5, 1000, None),method=2, NB=False,search=False)
 
-models = {
-	
-	
-}
 
 
