@@ -1,0 +1,81 @@
+Responded at,Presenter,Screen name,Activity type,Activity title,Response options,Your response,Correct,Confirmation message
+09/04/18 10:05 PM,coms4701,Jing Q.,Open ended,"What comes to mind when you think ""artificial intelligence""?","",Inspiring!,"",""
+09/04/18 10:50 PM,coms4701,Jing Q.,Open ended,What is one thing you want to take away from this course?,"",a brief idea of AI and preparation for future interests,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,Move left,Percept | Action,Action,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,Sweep,Percept | Action,Action,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,Current location,Percept | Action,Percept,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,Do nothing,Percept | Action,Action,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,Move right,Percept | Action,Action,"",""
+09/06/18 10:03 PM,coms4701,Jing Q.,Multiple choice,IsDirty?,Percept | Action,Percept,"",""
+09/11/18 10:08 PM,coms4701,Jing Q.,Multiple choice,How big is the search tree for this graph?,Two | Four | Five | Infinite,Two,"",""
+09/13/18 10:25 PM,coms4701,Jing Q.,Multiple choice,Which solution does A* return?,S-A-G | S-G,S-G,"",""
+09/18/18 10:49 PM,coms4701,Jing Q.,Multiple choice,Which of these assignments should occur next (break ties in numerical order)?,Q1=2 | Q3=1 | Q4=1 | Q4=3,Q4=3,"",""
+09/20/18 10:22 PM,coms4701,Jing Q.,Multiple choice,How many possible solutions are left after performing arc consistency?,0 | 1 | 2 | 3 | 4,3,"",""
+09/27/18 09:57 PM,coms4701,Jing Q.,Clickable image,Which are the branches eliminated by alpha-beta pruning?,region:other | Region 1 | Region 2 | Region 3 | Region 4 | Region 5 | Region 6 | Region 7 | Region 8 | Region 9,"Click (outside defined region): 43.44%, 91.98%","",""
+09/27/18 10:41 PM,coms4701,Jing Q.,Multiple choice,Which action should red take to maximize its utility?,Left | Right,Left,"",""
+10/02/18 10:29 PM,coms4701,Jing Q.,Multiple choice,For what value of $$\gamma$$ will both exit states be equally good from state d?,$$0.1^2$$ | $$\sqrt{0.1}$$ | $$0.1^3$$ | $$\sqrt[3]{0.1}$$,$$\sqrt{0.1}$$,"",""
+10/23/18 10:39 PM,coms4701,Jing Q.,Multiple choice,What is P(rain | dry)?,0.74 | 0.08 | 0.06 | 0.17,0.08,"",""
+10/25/18 10:29 PM,coms4701,Jing Q.,Multiple choice,What is $$P(X_1=rain | X_2=sun)$$?,0.2 | 0.1 | 0.08 | 0.06,0.1,"",""
+11/08/18 11:29 PM,coms4701,Jing Q.,Ranking,Match the probability distributions with the correct factoring.,"$$P(M,J)$$ | $$P(B,E|A)$$ | $$P(A,B)$$ | $$P(M|A,J)$$","$$P(A,B)$$, $$P(M,J)$$, $$P(B,E|A)$$, $$P(M|A,J)$$","",""
+11/13/18 11:14 PM,coms4701,Jing Q.,Multiple choice,Which additional node must be conditioned on so that A and E are independent?,F | B | G | D | none (already independent),none (already independent),"",""
+11/27/18 11:05 PM,coms4701,Jing Q.,Multiple choice,"Which weights would separate the data with the features $$(1,x_1,x_2,|x_1|)$$?","$$(1,0,1,-1)$$ | $$(0,1,-1,-1) | $$(0,0,-1,-1)$$ | $$(1,0,-1,-1)$$","$$(1,0,-1,-1)$$","",""
+09/09/19 05:38 PM,kathleenmckeown,,Open ended,I took the subway to ...,"",midtown,"","Thank you!
+
+KATHY"
+09/09/19 06:03 PM,kathleenmckeown,,Open ended,I want to eat Chinese food.,"",.25*.32*.65*.25*.75,"","Thank you!
+
+Kathy"
+09/09/19 06:10 PM,kathleenmckeown,,Open ended,"What is the probability of ""want to""?","",786/1215,"","Thank you!
+
+Kathy"
+09/11/19 05:38 PM,kathleenmckeown,,Open ended,What words give a clue about genre?,"",Adjectives,"","Thank you!
+
+Kathy"
+09/11/19 05:49 PM,kathleenmckeown,,Open ended,What words give a clue about sentiment?,"",Adjectives like good or bad. Verbs like hurt or help,"","Thank you!
+
+Kathy"
+09/11/19 05:59 PM,kathleenmckeown,,Open ended,How big would the unigram vector be?,"",5000,"","Thank you!
+
+Kathy"
+09/11/19 06:00 PM,kathleenmckeown,,Open ended,How big would the bigram vector be?,"",Twice or more of vocabulary size,"","Thank you!
+
+Kathy"
+09/16/19 05:51 PM,kathleenmckeown,,Multiple choice,P(D even) =?,1 | 5 | .5 | .3 | None of the above,.5,"",""
+09/16/19 05:52 PM,kathleenmckeown,,Multiple choice,P(D even) =?,1 | .25 | .5 | .3 | None of the above,.5,"",""
+09/16/19 05:53 PM,kathleenmckeown,,Multiple choice,P (D even | D > 4),2/3 | 1/2 | 1/4 | 0 | None of the above,1/2,"",""
+09/16/19 05:53 PM,kathleenmckeown,,Multiple choice,P(D odd | D >= 4),3/6 | 2/3 | 1/3 | 1/4 | None of the above,1/3,"","Thank you!
+
+Kathy"
+09/16/19 05:54 PM,kathleenmckeown,,Multiple choice,"P(D odd|D>=4, D<=5)=?",2/3 | 1/3 | 0/2 | 1/2 | None of the above,1/2,"","Thank you!
+
+Kathy"
+09/23/19 05:26 PM,kathleenmckeown,,Open ended,"How would you represent the meaning of the word. ""chair""?","","Sit on, tools","","THANK YOU! 
+
+FEIT-ZIN"
+09/23/19 05:28 PM,kathleenmckeown,,Open ended,"How would you represent. the meaning. of. ""speak""?","","People, mouth, sound, lip","","Thank. you!
+
+Fei-Tzin"
+09/25/19 06:01 PM,kathleenmckeown,,Multiple choice,What is W?,The embedding for word x_i | The matrix of embeddings for all words | None of the above,The matrix of embeddings for all words,"","Thank you!
+
+Kathy"
+09/25/19 06:02 PM,kathleenmckeown,,Multiple choice,What is h?,the previous state | the hidden layer | weights for the previous state | None of the above,the hidden layer,"","Thank you!
+
+Kathy"
+09/25/19 06:03 PM,kathleenmckeown,,Multiple choice,What is x_t*W,the hidden layer | the word embedding for x_t | the previous state | None of the above,the word embedding for x_t,"","Thank you!
+
+Kathy"
+09/30/19 05:20 PM,kathleenmckeown,,Multiple choice,"In the garden path reading of ""The cotton clothing is made of grows in Mississippi"" ""cotton"" is a",Verb | Noun | Adjective | Adverb | None of the above,Adjective,"","Thank you!
+
+Kathy"
+09/30/19 05:21 PM,kathleenmckeown,,Multiple choice,"In the correct reading of ""The cotton clothing is made of grows in Mississippi"" ""cotton"" is a",Verb | Noun | Adjective | Adverb | None of the above,Adjective,"",""
+09/30/19 05:41 PM,kathleenmckeown,,Multiple choice,Is Monday a temporal adverb or a noun?,Temporal adverb | Noun | Neither,Noun,"","Thank you!
+
+Kathy"
+10/02/19 05:39 PM,kathleenmckeown,,Open ended,What is the probability of 4 consecutive rainy days?,"",0.0432,"","Thank you!
+
+Kathy"
+10/02/19 05:55 PM,kathleenmckeown,,Open ended,What kind of data would we need to learn the HMM parameters?,"",Sequence O and state domain,"","Thank you!
+
+Kathy"
+10/02/19 06:09 PM,kathleenmckeown,,Multiple choice,What is P(NN|TO)?,.016 | .00047 | .087 | 0 | None of the above,.00047,"",""
+10/02/19 06:09 PM,kathleenmckeown,,Multiple choice,What is  P(VB|TO)?,.035 | .0038 | .047 | .83 | None of the above,.83,"",""
