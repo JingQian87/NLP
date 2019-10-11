@@ -35,7 +35,7 @@ NUM_CLASSES = 4
 USE_CUDA = torch.cuda.is_available()  # CUDA will be available if you are using the GPU image for this homework
 
 # Global definitions - saving and loading data
-FRESH_START = True  # set this to false after running once with True to just load your preprocessed data from file
+FRESH_START = False  # set this to false after running once with True to just load your preprocessed data from file
 #                     (good for debugging)
 TEMP_FILE = "temporary_data.pkl"  # if you set FRESH_START to false, the program will look here for your data, etc.
 
@@ -57,7 +57,7 @@ def train_model(model, loss_fn, optimizer, train_generator, dev_generator):
     # TODO: 2) Each time you reach the end of the train dataset (one "epoch"), calculate the loss on the whole dev set;
     # TODO and 3) stop training and return the model once the development loss stops improving (called early stopping).
     # TODO: Make sure to print the dev set loss each epoch to stdout.
-    raise NotImplementedError
+    #raise NotImplementedError
 
 
 def test_model(model, loss_fn, test_generator):
@@ -105,10 +105,7 @@ def main():
         print("Preprocessing all data from scratch....")
         train, dev, test = utils.get_data(DATA_FN)
         # train_data includes .word2idx and .label_enc as fields if you would like to use them at any time
-        train_generator, dev_generator, test_generator, embeddings, train_data = utils.vectorize_data(train, dev, test,
-                                                                                                BATCH_SIZE,
-                                                                                                EMBEDDING_DIM)
-
+        train_generator, dev_generator, test_generator, embeddings, train_data = utils.vectorize_data(train, dev, test, BATCH_SIZE, EMBEDDING_DIM)
         print("Saving DataLoaders and embeddings so you don't need to create them again; you can set FRESH_START to "
               "False to load them from file....")
         with open(TEMP_FILE, "wb+") as f:
