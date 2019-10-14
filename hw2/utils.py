@@ -79,8 +79,7 @@ def make_vectors(data, word2idx, label_enc=None):
     :param label_enc: a OneHotEncoder that turns labels into one-hot vectors. Pass None to fit a new one from the data.
     :return: X (a list of lists of word indices), y (a numpy matrix of class indices), label_enc (as in parameters)
     """
-    X = nn.utils.rnn.pad_sequence([torch.tensor([word2idx[word] if word in word2idx else word2idx['<unk>'] for word in
-                                                 datapoint]) for datapoint in get_tokens(data)])
+    X = nn.utils.rnn.pad_sequence([torch.tensor([word2idx[word] if word in word2idx else word2idx['<unk>'] for word in datapoint]) for datapoint in get_tokens(data)])
     y = data['sentiment'].to_numpy()
     if label_enc is None:
         label_enc = LabelEncoder()
