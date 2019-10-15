@@ -19,9 +19,12 @@ class DenseNetwork(nn.Module):
 
         ########## YOUR CODE HERE ##########
         # TODO: Here, create any layers and attributes your network needs.
+        # Define the embedding layer
         self.embedding = nn.Embedding.from_pretrained(weight)
+        # Define two dense layers
         self.dense1 = nn.Linear(embed_dim, hidden_dim) 
         self.dense2 = nn.Linear(hidden_dim, output_dim)
+        # Define the activation layer
         self.relu = nn.ReLU()     
 
     def forward(self, x):
@@ -103,13 +106,40 @@ class RecurrentNetwork(nn.Module):
 # TODO: PyTorch unfortunately requires us to have your original class definitions in order to load your saved
 # TODO: dense and recurrent models in order to grade their performance.
 class ExperimentalNetwork(nn.Module):
-    def __init__(self):
+    # extension-grading: Extension 2, architecture changes - flattening embeddings using the average of unpadded sentence words other than sum. 
+    def __init__(self, embed_dim, output_dim, hidden_dim, weight):
         super(ExperimentalNetwork, self).__init__()
 
         ########## YOUR CODE HERE ##########
-        raise NotImplementedError
+        self.embedding = nn.Embedding.from_pretrained(weight)
+        self.dense1 = nn.Linear(embed_dim, hidden_dim) 
+        self.dense2 = nn.Linear(hidden_dim, output_dim)
+        self.relu = nn.ReLU() 
 
-    # x is a PaddedSequence for an RNN
+    # Get the non-zero lengths of the PaddedSequence x.
+    def get_len(self, x):
+        x_len = []
+        for ix in x:
+            if ix[-1] != 0:
+                x_len.append(len(ix)*1.0)
+            else:
+                x_len.append((ix==0).nonzero()[0])           
+        return x_len
+
+    # x is a PaddedSequence 
     def forward(self, x):
         ########## YOUR CODE HERE ##########
-        raise NotImplementedError
+        # Get the sentence length of x before padding
+        x_lengths = self.get_len(x)
+        # Put the words through an Embedding layer (which was initialized with the pretrained embeddings)
+        x = self.embedding(x)
+        # Take the averaged embeddings over sentence length
+        y = torch.zeros(x.size(0), x.size(2), dtype=torch.float)
+        for i in range(x.size(0)):
+            for j in range(x.size(2)):
+                y[i][j] = x[i,:,j].sum()/x_lengths[i]
+        # Feed the result into 2-layer feedforward network which produces a 4-vector of values
+        y = self.dense1(y)
+        y = self.relu(y)
+        y = self.dense2(y)
+        return y

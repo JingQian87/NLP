@@ -151,11 +151,12 @@ def main():
     # optimizer = optim.Adam(dnn.parameters())
     # # TODO 2) run train_model() to train it, and
     # trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
-    # DNN_PATH = 'dense.pth'
+    DNN_PATH = 'dense.pth'
     # torch.save(trained_dnn, DNN_PATH)
     # # TODO: 3) run test_model() on the result
-    # dnn_test = torch.load(DNN_PATH)
-    # test_model(dnn_test, loss_fn, test_generator)
+    print("Test on the saved Dense Network")
+    dnn_test = torch.load(DNN_PATH)
+    test_model(dnn_test, loss_fn, test_generator)
     """
     Output:
     Test loss: tensor([25.7230])
@@ -165,23 +166,25 @@ def main():
     ########## Base RNN ################
     # # TODO: for each of the two models, you should 1) create it,
     # print("train and test on RNN!")
-    # SENTENCE_LEN = 91
+    SENTENCE_LEN = 91
     # rnn = models.RecurrentNetwork(SENTENCE_LEN, NUM_CLASSES, HIDDEN_DIM, embeddings)
     # optimizer = optim.Adam(rnn.parameters())
     # # TODO 2) run train_model() to train it, and
     # trained_rnn = train_model(rnn, loss_fn, optimizer, train_generator, dev_generator)
-    # RNN_PATH = 'recurrent.pth'
+    RNN_PATH = 'recurrent.pth'
     # torch.save(trained_rnn, RNN_PATH)
     # # TODO: 3) run test_model() on the result
-    # rnn_test = torch.load(RNN_PATH)
-    # test_model(rnn_test, loss_fn, test_generator)
+    print("Test on the saved Recurrent Network")
+    rnn_test = torch.load(RNN_PATH)
+    test_model(rnn_test, loss_fn, test_generator)
     """
     Output:
     Test loss: tensor([25.7136])
     F-score: 0.42172967869116373
     """
 
-    # extension-grading: Extension 1, Tweets tokenizers.
+    # extension-grading: Extension 1, changes to the preprocessing of the data - Tweets tokenizers.
+    # Major changes are in the utils.py labeled by "extension-grading"
     Extension1 = False
     if Extension1:
         print("Train and test dnn with Extension 1: Tweets tokenizers")
@@ -192,12 +195,32 @@ def main():
         optimizer = optim.Adam(dnn.parameters())
         trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
         test_model(trained_dnn, loss_fn, test_generator)
-    """
-    Output:
-    Test loss: tensor([25.5987])
-    F-score: 0.4465511728425936
-    Compared with original tokenizer, F-score increased by 1.6%.
-    """
+        """
+        Output:
+        Test loss: tensor([25.5987])
+        F-score: 0.4465511728425936
+        # Compared with original tokenizer, F-score increased by 1.6%.
+        """
+
+    # extension-grading: Extension 2, architecture changes - flattening embeddings using the average of unpadded sentence words other than sum. 
+    # Major changes are in the models.py labeled by "extension-grading"
+    Extension2 = False
+    if Extension2:
+        print("Train and test dnn with Extension 2: Architecture changes - flattening embeddings")
+        # initialize the experimental model
+        exp = models.ExperimentalNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
+        optimizer = optim.Adam(exp.parameters())
+        # run train_model() to train it
+        trained_exp = train_model(exp, loss_fn, optimizer, train_generator, dev_generator)
+        # run test_model() on the result
+        test_model(trained_exp, loss_fn, test_generator)
+        """
+        Output:
+        Test loss: tensor([29.4298])
+        F-score: 0.22199231332724553
+        # Compared with original architecture, F-score decreased by half.
+        """  
+
 
 if __name__ == '__main__':
     main()
