@@ -52,13 +52,33 @@ def train_model(model, loss_fn, optimizer, train_generator, dev_generator):
     """
     ########## YOUR CODE HERE ##########
     # TODO: Given a model, data, and loss function, you should do the following:
-    # TODO: 1) Loop through the whole train dataset performing batch optimization with the optimizer of your choice,
-    # TODO: updating the model parameters with each batch (we suggest you use torch.optim.Adam to start);
-    # TODO: 2) Each time you reach the end of the train dataset (one "epoch"), calculate the loss on the whole dev set;
-    # TODO and 3) stop training and return the model once the development loss stops improving (called early stopping).
-    # TODO: Make sure to print the dev set loss each epoch to stdout.
-    #raise NotImplementedError
+    EPOCHS = 20
+    dev_losses = []
+    for iepoch in range(EPOCHS): 
+        # TODO: 1) Loop through the whole train dataset performing batch optimization with torch.optim.Adam
+        for train_batch, train_label in train_generator:
+            # Compute the loss
+            loss = loss_fn(model(train_batch),train_label)
+            # Zero the gradients
+            model.zero_grad()
+            # perform a backward pass (backpropagation)
+            loss.backward()
+            # Update the parameters
+            optimizer.step()
 
+        # TODO: 2) Each time you reach the end of the train dataset (one "epoch"), calculate the loss on the whole dev set;
+        dev_loss = 0
+        for ibatch, ilabel in dev_generator:
+            dev_loss += loss_fn(model(ibatch), ilabel)
+
+        # TODO: Make sure to print the dev set loss each epoch to stdout.
+        print(iepoch+1, dev_loss)
+        dev_losses.append(dev_loss)
+
+        # TODO and 3) stop training and return the model once the development loss stops improving (called early stopping).
+        if iepoch > 1 and dev_losses[-2]-dev_loss < 0.01:
+            break
+    return model
 
 def test_model(model, loss_fn, test_generator):
     """
@@ -123,10 +143,18 @@ def main():
     loss_fn = nn.CrossEntropyLoss()
 
     ########## YOUR CODE HERE ##########
+    HIDDEN_DIM = 64
     # TODO: for each of the two models, you should 1) create it,
+    dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(dnn.parameters())
     # TODO 2) run train_model() to train it, and
+    trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
+    DNN_PATH = 'dense.pth'
+    torch.save(dnn, DNN_PATH)
     # TODO: 3) run test_model() on the result
-    raise NotImplementedError
+    dnn_test = torch.load(DNN_PATH)
+    test_model(dnn_test, loss_fn, test_generator)
 
 
 if __name__ == '__main__':
