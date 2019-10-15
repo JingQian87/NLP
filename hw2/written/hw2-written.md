@@ -100,18 +100,40 @@ $$
 \frac{\partial Loss}{\partial x_7} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}) = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2},\\
 \frac{\partial Loss}{\partial x_6} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2},\\
 \frac{\partial Loss}{\partial x_5} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_5} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}) = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2},\\
-\frac{\partial Loss}{\partial x_4} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_4} = \frac{\partial Loss}{\partial x_8}\frac{\partial f_8}{\partial x_7}\frac{\partial f_7}{\partial x_4} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(2*x_4),\\
-\frac{\partial Loss}{\partial x_3} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\partial f_8}{\partial x_6}\frac{\partial f_6}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(b+c*x_2),\\
-\frac{\partial Loss}{\partial x_2} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\partial f_8}{\partial x_6}\frac{\partial f_6}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(a+c*x_3),\\
-\frac{\partial Loss}{\partial x_1} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_1} = \frac{\partial Loss}{\partial x_8}\frac{\partial f_8}{\partial x_5}\frac{\partial f_5}{\partial x_2} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(\frac{\exp(-x_1)}{(1+\exp(-x_1))^2}).
+\frac{\partial Loss}{\partial x_4} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_4} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7}\frac{\partial x_7}{\partial x_4} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(2*x_4),\\
+\frac{\partial Loss}{\partial x_3} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(b+c*x_2),\\
+\frac{\partial Loss}{\partial x_2} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(a+c*x_3),\\
+\frac{\partial Loss}{\partial x_1} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_1} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_5}\frac{\partial x_5}{\partial x_2} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(\frac{\exp(-x_1)}{(1+\exp(-x_1))^2}).
 \end{split}
 $$
 
 
 **2.2. Calculate $\frac{\partial Loss}{\partial a},\frac{\partial Loss}{\partial b},\frac{\partial Loss}{\partial c},\frac{\partial Loss}{\partial d}$ and update the learned $a,b,c,d$.**
 
+Similar to the partial differential formula in  2.1., we could get the following fomula:
+$$
+\begin{split}
+\frac{\partial x_6}{\partial a} &=& \frac{\partial f_6}{\partial a} = x_2,\\
+\frac{\partial x_6}{\partial b} &=& \frac{\partial f_6}{\partial b} = x_3,\\
+\frac{\partial x_6}{\partial c} &=& \frac{\partial f_6}{\partial c} = x_2*x_3,\\
+\frac{\partial x_7}{\partial d} &=& \frac{\partial f_7}{\partial d} = 1,\\
+\end{split}
+$$
+Also, due to similar reasons in 2.1, $\frac{\partial x_5}{\partial a}=\frac{\partial x_5}{\partial b}=\frac{\partial x_5}{\partial c}=\frac{\partial x_5}{\partial d}=\frac{\partial x_6}{\partial d} = \frac{\partial x_7}{\partial a}=\frac{\partial x_7}{\partial b}=\frac{\partial x_7}{\partial c}=0$. 
 
-
+We could get the values of $x_5, x_6, x_7$ according to the values of $x_1,x_2,x_3,x_4$ and $a,b,c,d$.
+$$
+\begin{split}
+x_5 &=& f_5(x_1) = \frac{1}{1+\exp(-x_1)} = \frac{1}{1+\exp(-0)} = 1/2,\\
+x_6 &=& f_6(x_2, x_3) = 
+\end{split}
+$$
+So we have:
+$$
+\begin{split}
+\frac{\partial Loss}{\partial a} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial a} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial a} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}x_2,\\
+\end{split}
+$$
 
 
 
