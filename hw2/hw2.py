@@ -57,10 +57,10 @@ def train_model(model, loss_fn, optimizer, train_generator, dev_generator):
     for iepoch in range(EPOCHS): 
         # TODO: 1) Loop through the whole train dataset performing batch optimization with torch.optim.Adam
         for train_batch, train_label in train_generator:
-            # Compute the loss
-            loss = loss_fn(model(train_batch),train_label)
             # Zero the gradients
             model.zero_grad()
+            # Compute the loss
+            loss = loss_fn(model(train_batch),train_label)
             # perform a backward pass (backpropagation)
             loss.backward()
             # Update the parameters
@@ -72,7 +72,7 @@ def train_model(model, loss_fn, optimizer, train_generator, dev_generator):
             dev_loss += loss_fn(model(ibatch), ilabel)
 
         # TODO: Make sure to print the dev set loss each epoch to stdout.
-        print(iepoch+1, dev_loss)
+        print("Epoch:", iepoch+1, ", dev loss:", dev_loss)
         dev_losses.append(dev_loss)
 
         # TODO and 3) stop training and return the model once the development loss stops improving (called early stopping).
@@ -144,18 +144,32 @@ def main():
 
     ########## YOUR CODE HERE ##########
     HIDDEN_DIM = 64
-    # TODO: for each of the two models, you should 1) create it,
-    dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(dnn.parameters())
-    # TODO 2) run train_model() to train it, and
-    trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
-    DNN_PATH = 'dense.pth'
-    torch.save(dnn, DNN_PATH)
-    # TODO: 3) run test_model() on the result
-    dnn_test = torch.load(DNN_PATH)
-    test_model(dnn_test, loss_fn, test_generator)
+    ########## Base DNN ################
+    # # TODO: for each of the two models, you should 1) create it,
+    # dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
+    # loss_fn = nn.CrossEntropyLoss()
+    # optimizer = optim.Adam(dnn.parameters())
+    # # TODO 2) run train_model() to train it, and
+    # trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
+    # DNN_PATH = 'dense.pth'
+    # torch.save(trained_dnn, DNN_PATH)
+    # # TODO: 3) run test_model() on the result
+    # dnn_test = torch.load(DNN_PATH)
+    # test_model(dnn_test, loss_fn, test_generator)
 
+    ########## Base RNN ################
+    # # TODO: for each of the two models, you should 1) create it,
+    # SENTENCE_LEN = 91
+    # rnn = models.RecurrentNetwork(SENTENCE_LEN, NUM_CLASSES, HIDDEN_DIM, embeddings)
+    # loss_fn = nn.CrossEntropyLoss()
+    # optimizer = optim.Adam(rnn.parameters())
+    # # TODO 2) run train_model() to train it, and
+    # trained_rnn = train_model(rnn, loss_fn, optimizer, train_generator, dev_generator)
+    # RNN_PATH = 'recurrent.pth'
+    # torch.save(trained_rnn, RNN_PATH)
+    # # TODO: 3) run test_model() on the result
+    # rnn_test = torch.load(RNN_PATH)
+    # test_model(rnn_test, loss_fn, test_generator)
 
 if __name__ == '__main__':
     main()
