@@ -146,14 +146,14 @@ def main():
     HIDDEN_DIM = 64
     ########## Base DNN ################
     # # TODO: for each of the two models, you should 1) create it,
-    # print("train and test on DNN!")
-    # dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
-    # optimizer = optim.Adam(dnn.parameters())
-    # # TODO 2) run train_model() to train it, and
-    # trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
+    print("train and test on DNN!")
+    dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
+    optimizer = optim.Adam(dnn.parameters())
+    # TODO 2) run train_model() to train it, and
+    #trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
     DNN_PATH = 'dense.pth'
-    # torch.save(trained_dnn, DNN_PATH)
-    # # TODO: 3) run test_model() on the result
+    #torch.save(trained_dnn, DNN_PATH)
+    # TODO: 3) run test_model() on the result
     print("Test on the saved Dense Network")
     dnn_test = torch.load(DNN_PATH)
     test_model(dnn_test, loss_fn, test_generator)
@@ -164,16 +164,16 @@ def main():
     """
 
     ########## Base RNN ################
-    # # TODO: for each of the two models, you should 1) create it,
-    # print("train and test on RNN!")
+    # TODO: for each of the two models, you should 1) create it,
+    print("train and test on RNN!")
     SENTENCE_LEN = 91
-    # rnn = models.RecurrentNetwork(SENTENCE_LEN, NUM_CLASSES, HIDDEN_DIM, embeddings)
-    # optimizer = optim.Adam(rnn.parameters())
-    # # TODO 2) run train_model() to train it, and
-    # trained_rnn = train_model(rnn, loss_fn, optimizer, train_generator, dev_generator)
+    rnn = models.RecurrentNetwork(SENTENCE_LEN, NUM_CLASSES, HIDDEN_DIM, embeddings)
+    optimizer = optim.Adam(rnn.parameters())
+    # TODO 2) run train_model() to train it, and
+    #trained_rnn = train_model(rnn, loss_fn, optimizer, train_generator, dev_generator)
     RNN_PATH = 'recurrent.pth'
-    # torch.save(trained_rnn, RNN_PATH)
-    # # TODO: 3) run test_model() on the result
+    #torch.save(trained_rnn, RNN_PATH)
+    # TODO: 3) run test_model() on the result
     print("Test on the saved Recurrent Network")
     rnn_test = torch.load(RNN_PATH)
     test_model(rnn_test, loss_fn, test_generator)
