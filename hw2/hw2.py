@@ -146,8 +146,8 @@ def main():
     HIDDEN_DIM = 64
     ########## Base DNN ################
     # # TODO: for each of the two models, you should 1) create it,
+    # print("train and test on DNN!")
     # dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
-    # loss_fn = nn.CrossEntropyLoss()
     # optimizer = optim.Adam(dnn.parameters())
     # # TODO 2) run train_model() to train it, and
     # trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
@@ -156,12 +156,17 @@ def main():
     # # TODO: 3) run test_model() on the result
     # dnn_test = torch.load(DNN_PATH)
     # test_model(dnn_test, loss_fn, test_generator)
+    """
+    Output:
+    Test loss: tensor([25.7230])
+    F-score: 0.4399188910197242
+    """
 
     ########## Base RNN ################
     # # TODO: for each of the two models, you should 1) create it,
+    # print("train and test on RNN!")
     # SENTENCE_LEN = 91
     # rnn = models.RecurrentNetwork(SENTENCE_LEN, NUM_CLASSES, HIDDEN_DIM, embeddings)
-    # loss_fn = nn.CrossEntropyLoss()
     # optimizer = optim.Adam(rnn.parameters())
     # # TODO 2) run train_model() to train it, and
     # trained_rnn = train_model(rnn, loss_fn, optimizer, train_generator, dev_generator)
@@ -170,6 +175,29 @@ def main():
     # # TODO: 3) run test_model() on the result
     # rnn_test = torch.load(RNN_PATH)
     # test_model(rnn_test, loss_fn, test_generator)
+    """
+    Output:
+    Test loss: tensor([25.7136])
+    F-score: 0.42172967869116373
+    """
+
+    # extension-grading: Extension 1, Tweets tokenizers.
+    Extension1 = False
+    if Extension1:
+        print("Train and test dnn with Extension 1: Tweets tokenizers")
+        train, dev, test = utils.get_data(DATA_FN)
+        train_generator, dev_generator, test_generator, embeddings,train_data = utils.vectorize_data(train, dev, test, BATCH_SIZE, EMBEDDING_DIM, extension=True)
+        # try on DNN
+        dnn = models.DenseNetwork(EMBEDDING_DIM, NUM_CLASSES, HIDDEN_DIM, embeddings)
+        optimizer = optim.Adam(dnn.parameters())
+        trained_dnn = train_model(dnn, loss_fn, optimizer, train_generator, dev_generator)
+        test_model(trained_dnn, loss_fn, test_generator)
+    """
+    Output:
+    Test loss: tensor([25.5987])
+    F-score: 0.4465511728425936
+    Compared with original tokenizer, F-score increased by 1.6%.
+    """
 
 if __name__ == '__main__':
     main()

@@ -13,6 +13,8 @@ from sklearn.preprocessing import LabelEncoder
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
+# extension-grading
+from nltk.tokenize import TweetTokenizer
 
 # Global definitions - data
 EMBEDS_FN = '/Users/mac/Desktop/NLPdata/hw2/resources/glove.twitter.27B.100d.txt'
@@ -20,7 +22,8 @@ LABEL_NAMES = ["happiness", "worry", "neutral", "sadness"]
 
 
 class EmotionDataset(Dataset):
-    def __init__(self, data, word2idx=None, encoder=None, glove=None):
+    # extension-grading
+    def __init__(self, data, word2idx=None, encoder=None, glove=None, extension=False):
         """
         Dataset class to help load and handle the data, specific to our format.
         Provides X, y pairs.
@@ -38,7 +41,9 @@ class EmotionDataset(Dataset):
 
         self.label_enc = encoder  # encoder may be None, in which case make_vectors() will handle it
         self.emotion_frame = data
-        self.word2idx = word2idx if word2idx is not None else get_word2idx(get_tokens(data), glove)
+        # extension-grading
+        self.extension = extension
+        self.word2idx = word2idx if word2idx is not None else get_word2idx(get_tokens(data, self.extension), glove)
         self.X, self.y, self.label_enc = make_vectors(self.emotion_frame, self.word2idx, self.label_enc)
 
     def __len__(self):
@@ -69,8 +74,8 @@ def get_word2idx(data, glove):
 
     return word2idx
 
-
-def make_vectors(data, word2idx, label_enc=None):
+# extension-grading
+def make_vectors(data, word2idx, label_enc=None, extension=False):
     """
     Helper function: given text data and labels, transform them into vectors, where text becomes lists of word indices.
     Words not in the provided vocabulary get mapped to an "unknown" token, <UNK>.
@@ -79,7 +84,7 @@ def make_vectors(data, word2idx, label_enc=None):
     :param label_enc: a OneHotEncoder that turns labels into one-hot vectors. Pass None to fit a new one from the data.
     :return: X (a list of lists of word indices), y (a numpy matrix of class indices), label_enc (as in parameters)
     """
-    X = nn.utils.rnn.pad_sequence([torch.tensor([word2idx[word] if word in word2idx else word2idx['<unk>'] for word in datapoint]) for datapoint in get_tokens(data)])
+    X = nn.utils.rnn.pad_sequence([torch.tensor([word2idx[word] if word in word2idx else word2idx['<unk>'] for word in datapoint]) for datapoint in get_tokens(data, extension=extension)])
     y = data['sentiment'].to_numpy()
     if label_enc is None:
         label_enc = LabelEncoder()
@@ -89,13 +94,19 @@ def make_vectors(data, word2idx, label_enc=None):
     return X, y, label_enc
 
 
-def get_tokens(data):
+def get_tokens(data, extension=False):
     """
     Helper function to get the tokens in a whole dataset.
     :param data: a pandas DataFrame where the text is in a column named 'content'
     :return: a list of lists of words in the whole dataset (i.e., a list of nltk-tokenized data points)
     """
-    return [nltk.word_tokenize(datapoint.lower()) for datapoint in data['content'].tolist()]
+    # extension-grading
+    # Extension 1: tokenizers specifically for Tweets.
+    if extension:
+        tknzr = TweetTokenizer()
+        return [tknzr.tokenize(datapoint.lower()) for datapoint in data['content'].tolist()]
+    else:
+        return [nltk.word_tokenize(datapoint.lower()) for datapoint in data['content'].tolist()]
 
 
 def get_data(data_fn):
@@ -119,8 +130,8 @@ def get_data(data_fn):
 
     return train, dev, test
 
-
-def vectorize_data(train, dev, test, batch_size, embedding_dim):
+# extension-grading
+def vectorize_data(train, dev, test, batch_size, embedding_dim, extension=False):
     """
     Transform the data from pandas DataFrame form into numerical data packed in DataLoaders.
     (Also create the pretrained embedding matrix in the proper order, which you will use in your models).
@@ -147,9 +158,10 @@ def vectorize_data(train, dev, test, batch_size, embedding_dim):
     glove = {key: val.values for key, val in df.T.items()}
 
     # Create the three Datasets
-    train_data = EmotionDataset(train, glove=glove, encoder=label_enc)
-    dev_data = EmotionDataset(dev, word2idx=train_data.word2idx, encoder=label_enc)
-    test_data = EmotionDataset(test, word2idx=train_data.word2idx, encoder=label_enc)
+    # extension-grading
+    train_data = EmotionDataset(train, glove=glove, encoder=label_enc, extension=extension)
+    dev_data = EmotionDataset(dev, word2idx=train_data.word2idx, encoder=label_enc, extension=extension)
+    test_data = EmotionDataset(test, word2idx=train_data.word2idx, encoder=label_enc, extension=extension)
 
     print("Train:", len(train_data), "\nDev:", len(dev_data), "\nTest:", len(test_data))
     print("\n\n")
