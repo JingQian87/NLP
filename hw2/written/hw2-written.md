@@ -100,10 +100,10 @@ $$
 \frac{\partial Loss}{\partial x_7} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}) = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2},\\
 \frac{\partial Loss}{\partial x_6} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2},\\
 \frac{\partial Loss}{\partial x_5} &=& \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_5} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}) = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2},\\
-\frac{\partial Loss}{\partial x_4} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_4} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7}\frac{\partial x_7}{\partial x_4} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(2*x_4),\\
+\frac{\partial Loss}{\partial x_4} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_4} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7}\frac{\partial x_7}{\partial x_4} = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}(2*x_4),\\
 \frac{\partial Loss}{\partial x_3} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial x_3} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(b+c*x_2),\\
 \frac{\partial Loss}{\partial x_2} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial x_2} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}(a+c*x_3),\\
-\frac{\partial Loss}{\partial x_1} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_1} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_5}\frac{\partial x_5}{\partial x_1} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})(\frac{\exp(-x_1)}{(1+\exp(-x_1))^2}).
+\frac{\partial Loss}{\partial x_1} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial x_1} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_5}\frac{\partial x_5}{\partial x_1} = -\frac{\partial Loss}{\partial x_8}\frac{\exp(x_5+x_6)}{(\sum_{i=5}^7\exp(x_i))^2}\frac{\exp(-x_1)}{(1+\exp(-x_1))^2}.
 \end{split}
 $$
 
@@ -139,7 +139,7 @@ $$
 \frac{\partial Loss}{\partial c} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial c} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_6}\frac{\partial x_6}{\partial c} = \frac{\partial Loss}{\partial x_8}\frac{\exp(x_6)(\exp(x_5)+\exp(x_7))}{(\sum_{i=5}^7\exp(x_i))^2}*x_2*x_3\\
 &=& 3*\frac{\exp(-2)[\exp(1/2)+\exp(6)]}{(\exp(-2)+\exp(1/2)+\exp(6))^2}*2*(-1) = -0.002,\\
 \frac{\partial Loss}{\partial d} &=& \frac{\partial Loss}{\partial x_8}\sum\limits_{j=5}^7\frac{\partial x_8}{\partial x_j}\frac{\partial x_j}{\partial a} = \frac{\partial Loss}{\partial x_8}\frac{\partial x_8}{\partial x_7}\frac{\partial x_7}{\partial d} = \frac{\partial Loss}{\partial x_8}(-\frac{\exp(x_7+x_6)}{(\sum_{i=5}^7\exp(x_i))^2})\\
-&=& -3*\frac{\exp(-2)+\exp(6)}{(\exp(-2)+\exp(1/2)+\exp(6))^2} = -0.007.
+&=& -3*\frac{\exp(-2+6)}{(\exp(-2)+\exp(1/2)+\exp(6))^2} = -0.001.
 \end{split}
 $$
 So the learned parameters $a,b,c,d$ after updated are:
@@ -148,35 +148,20 @@ $$
 a &\leftarrow& a - \eta\frac{\partial Loss}{\partial a} = 3-0.1*0.002 = 2.9998,\\
 b &\leftarrow& b - \eta\frac{\partial Loss}{\partial b} = 4-0.1*(-0.001) = 4.0001,\\
 c &\leftarrow& c - \eta\frac{\partial Loss}{\partial c} = 2-0.1*(-0.002) = 2.0002,\\
-d &\leftarrow& d - \eta\frac{\partial Loss}{\partial d} = 2-0.1*(-0.007) = 2.0007.
+d &\leftarrow& d - \eta\frac{\partial Loss}{\partial d} = 2-0.1*(-0.001) = 2.0001.
 \end{split}
 $$
 
 
 #### **3. Coding Reflections**
 
-\subsection*{3.1. Extension 1}
+**3.1. Extension 1: changes to the preprocessing of the data**
 
-\1. Where in the code did you need to implement them, or what code implemented?
-
-
-
-2.Why did you think each of them might improve your performance? 
+The first extension I tried is to use tokenizers specifically for Tweets: TweetTokenizer from nltk package. I implemented it in the utils.py. I modified mainly in the function get_tokens() and also the class EmotionDataset, function make_vectors(), function vectorize_data. Moreover, in the main() function in hw2.py, I added the code to run extension1. Since the data we studied are tweets, it makes sense to use tokenizers specifically for Tweets. In fact, running on the same dense neural network, changing from original tokenizers to TweetTokenizer increased the F-score of test data by around 1.6%. So I think analyzing Tweets with tokenizers specifically for Tweets actually improve the model performance.
 
 
 
-3.What was the actual effect of each one, and why do you think that happened
+**3.2. Extension 2: architecture change**
 
+The second extension I tried is flattening embeddings using average method other than sum in the dense network. I implemented it in the models.py as a new class ExperimentalNetwork. Moreover, in the main() function in hw2.py, I added the code to run extension2. I thought the original flattening embeddings with sum ignored the difference between long sentence and short sentence. A long sentence with relatively small word embeddings may have similar sum to a short sentence with relatively large word embeddings. So I tried the average method, i.e., dividing the sum by the unpadded sentence length. But in fact, changing from original flattening to average method decreased the F-score of test data by almost half. I guess maybe the sentence length is not so important in our classification task. Also, I notice there are both positive and negative values in the embeddings, which may cancel out and also weaken the effect of sentence length.
 
-
-\subsection*{3.2. Extension 2}
-
-\1. Where in the code did you need to implement them, or what code implemented?
-
-
-
-2.Why did you think each of them might improve your performance? 
-
-
-
-3.What was the actual effect of each one, and why do you think that happened
