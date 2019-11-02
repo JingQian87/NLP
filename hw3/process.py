@@ -17,7 +17,7 @@ def load_msr(f, limit=None):
         Loads the MSR paraphrase corpus.
     '''
     lines = [x.strip().lower().split('\t') for x in open(f, 'r').readlines()[1:]]
-    sents = [[x[3], x[4]] for x in lines]
+    sents = [[x[3].split(), x[4].split()] for x in lines]
     labels = [int(x[0]) for x in lines]
     return sents, labels
 
