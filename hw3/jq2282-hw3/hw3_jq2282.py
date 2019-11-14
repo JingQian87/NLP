@@ -1,6 +1,6 @@
 '''
-Code for HW3
-
+Code for HW3 section 1
+Parameter search for word embeddings.
 Jing Qian (jq2282)
 '''
 
@@ -20,8 +20,8 @@ dimList = [100,300,1000]
 numNS = [1,5,15]
 EPOCHS = 5
 
+# generator for reading corpus from filename.
 class MySentences(object):
-	# generator for reading corpus from filename.
     def __init__(self, filename):
         self.filename = filename
  
@@ -29,6 +29,7 @@ class MySentences(object):
         for line in open(self.filename, 'r'):
             yield [word.lower() for word in tokenizer.tokenize(line)]
 
+# train word2vec skip-gram with negative sampling.
 def train_word2vec(corpus):
 	for iwin in windowList:
 		for idim in dimList:
@@ -89,6 +90,7 @@ def cooc_matrix(joint_dict, index_dict):
         values.append(value)
     return sparse.csr_matrix((values, (row_index, col_index)))
 
+# convert joint matrix to ppmi matrix.
 def ppmi_matrix(joint_matrix):
    # calculate the column sum, row sum and total sum of the co-occur matrix.
     sum_a0 = joint_matrix.sum(axis=0)
@@ -118,7 +120,7 @@ def ppmi_matrix(joint_matrix):
     
     return sparse.csr_matrix((ppmi_values, nonzero_index)) 
 
-# truncate with svd
+# truncate ppmi matrix with svd.
 def ppmi_svd(ppmi, idim):
     uu,ss,vv = linalg.svds(ppmi, idim)
     #print(np.shape(uu),np.shape(ss),np.shape(vv)) 
@@ -126,6 +128,7 @@ def ppmi_svd(ppmi, idim):
     sigma_sr = np.diag([x**0.5 for x in ss])
     return np.matmul(uu,sigma_sr)
 
+# save the word vectors from SVD on the ppmi matrix.
 def save_wv(word_vecs, index_dict, iwin, idim):
     keys = list(index_dict.keys())
     #print(np.shape(keys))
@@ -136,6 +139,7 @@ def save_wv(word_vecs, index_dict, iwin, idim):
         f1.write('\r\n')
     f1.close()  
 
+# generate word vectors from SVD on the ppmi matrix with different hyperparameters.
 def svd_ppmi(corpus):
 	index_dict = vocab_index(corpus)
 
@@ -151,6 +155,7 @@ def svd_ppmi(corpus):
 
 
 if __name__ == "__main__":
+    # load corpus
 	tokenizer = RegexpTokenizer(r'\w+')
 	sentence = MySentences(text)
 
